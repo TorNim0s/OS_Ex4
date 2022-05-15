@@ -109,6 +109,11 @@ int main(int argc, char *argv[])
 
     sleep(1);
 
+    if (send(sockfd, "EXIT", 4, 0) == -1)
+        perror("send");
+
+    sleep(1);
+
     close(sockfd);
 
     return 0;

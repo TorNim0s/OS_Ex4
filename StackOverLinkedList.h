@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "ourMemory.h"
+
 
 // Structure to create a node with data and next pointer
 struct Node
@@ -13,7 +15,7 @@ Node *head = NULL;
 void push(char *value)
 {
     struct Node *newNode;
-    newNode = (struct Node *)malloc(sizeof(struct Node));
+    newNode = (struct Node *)new_malloc(sizeof(struct Node));
     newNode->data = value; // assign value to the node
     if (head == NULL)
     {
@@ -36,7 +38,7 @@ char *pop()
     struct Node *temp = head;
     char *temp_data = head->data;
     head = head->next;
-    free(temp);
+    new_free(temp);
     return temp_data;
 }
 

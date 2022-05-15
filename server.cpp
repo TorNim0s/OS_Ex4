@@ -65,26 +65,35 @@ void *myThreadFun(void *vargp)
     int Bytes;
     while (1)
     {
-        Bytes = recv(new_fd, data, 1024, 0); 
+        if((Bytes = recv(new_fd, data, 1024, 0)) == -1)
+        {
+            perror("recv");
+            exit(1);
+        } 
 
         data[Bytes] = '\0';
 
-        printf("test -> %s", data);
+        // printf("RECIEVED: %s \n", data);
+        if (strncmp(data, "EXIT", 4) == 0){
+            printf("OUTPUT: Closed connection with: %d\n", new_fd);
+            break;
+        }
         pthread_mutex_lock(&mutex);
         if (strncmp(data, "PUSH", 4) == 0)
         {
             char *pointerData = data + 5;
             push(pointerData);
-            printf("Pushed -> %s\n", pointerData);
+            // printf("Pushed -> %s\n", pointerData);
         }
         else if (strncmp(data, "POP", 3) == 0)
         {
             char *pointerData = pop();
             if(pointerData == NULL){
                 printf("ERROR: Stack Underflow\n");
+                pthread_mutex_unlock(&mutex);
                 continue;
             }
-            printf("POP -> %s\n", pointerData);
+            printf("OUTPUT: %s\n", pointerData);
             // if (send(new_fd, pointerData, strlen(pointerData), 0) == -1)
             //     perror("send");
         }
@@ -94,16 +103,12 @@ void *myThreadFun(void *vargp)
 
             if(pointerData == NULL){
                 printf("ERROR: Stack Underflow\n");
+                pthread_mutex_unlock(&mutex);
                 continue;
             }
             printf("OUTPUT: %s\n", pointerData);
             // if (send(new_fd, pointerData, strlen(pointerData), 0) == -1)
             //     perror("send");
-        }
-        else
-        {
-            printf("closing connection with %d\n", new_fd);
-            break;
         }
         pthread_mutex_unlock(&mutex);
     }
@@ -198,7 +203,7 @@ int main(void)
 
         inet_ntop(their_addr.ss_family,
                   get_in_addr((struct sockaddr *)&their_addr),
-                  s, sizeof s);
+                  s, sizeof(s));
         printf("server: got connection from %s\n", s);
 
         pthread_t thread_id;
