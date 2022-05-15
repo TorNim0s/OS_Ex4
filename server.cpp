@@ -93,7 +93,7 @@ void *myThreadFun(void *vargp)
                 pthread_mutex_unlock(&mutex);
                 continue;
             }
-            printf("OUTPUT: %s\n", pointerData);
+            // printf("OUTPUT: %s\n", pointerData);
             // if (send(new_fd, pointerData, strlen(pointerData), 0) == -1)
             //     perror("send");
         }
