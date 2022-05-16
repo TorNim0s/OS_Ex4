@@ -1,7 +1,3 @@
-/*
-** client.c -- a stream socket client demo
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -18,6 +14,8 @@
 
 #define MAXDATASIZE 100 // max number of bytes we can get at once
 
+const int testSize = 50;
+
 // get sockaddr, IPv4 or IPv6:
 void *get_in_addr(struct sockaddr *sa)
 {
@@ -29,9 +27,10 @@ void *get_in_addr(struct sockaddr *sa)
     return &(((struct sockaddr_in6 *)sa)->sin6_addr);
 }
 
+
 int main(int argc, char *argv[])
 {
-    int sockfd;
+   int sockfd;
     struct addrinfo hints, *servinfo, *p;
     int rv;
     char s[INET6_ADDRSTRLEN];
@@ -84,88 +83,46 @@ int main(int argc, char *argv[])
 
     freeaddrinfo(servinfo); // all done with this structure
 
-    char data[1024];
-    int n = 0;
-    int Bytes;
+    char text[20];
 
-
-    while(1){
-        bzero(data, sizeof(data)); // clear buffer
-        n = 0;
-
-        printf("enter PUSH data, POP or TOP , to exit type something else\n");
-        while ((data[n++] = getchar()) != '\n')
-            ;
-        
-        data[strlen(data)-1] = '\0';
-
-        if (!(strncmp(data, "POP", 3) == 0) && !(strncmp(data, "TOP", 3) == 0) && !(strncmp(data, "PUSH", 4) == 0)){
-            if (send(sockfd, "EXIT", 4, 0) == -1)
-                perror("send");
-            break;
-        }
-
-        if (send(sockfd, data, strlen(data), 0) == -1)
+    for(int i = 0; i<=testSize; i++){
+        sprintf(text, "PUSH %d", i);
+        printf("sending %d\n", i);
+        if (send(sockfd, text, strlen(text), 0) == -1)
             perror("send");
         
-        // sleep(0.5);
+        sleep(0.2);
+    }
 
-        if(strncmp(data, "TOP", 3) == 0){
-            if((Bytes = recv(sockfd, data, 1024, 0)) == -1)
-            {
-                perror("recv");
-                exit(1);
-            } 
+    char data[1024];
+    int Bytes;
 
-            data[Bytes] = '\0';
-            
-            printf("%s\n", data);
-        }
+    for(int i = testSize; i>= 0; i--){
+        if (send(sockfd, "TOP", 3, 0) == -1)
+            perror("send");
 
+        if((Bytes = recv(sockfd, data, 1024, 0)) == -1)
+        {
+            perror("recv");
+            exit(1);
+        } 
+
+        data[Bytes] = '\0';
+        
+        printf("%s\n", data);
+        sleep(0.2);
+        
+        if (send(sockfd, "POP", 3, 0) == -1)
+            perror("send");
+        sleep(0.2);
 
     }
 
-    // if (send(sockfd, "PUSH HelloWorld!", 16, 0) == -1)
-    //     perror("send");
-
-    // sleep(1);
-
-    // if (send(sockfd, "PUSH HelloAAAA", 16, 0) == -1)
-    //     perror("send");
-
-    // sleep(1);
-
-    // if (send(sockfd, "TOP", 3, 0) == -1)
-    //     perror("send");
-
-    // sleep(1);
-
-    // if (send(sockfd, "POP", 3, 0) == -1)
-    //     perror("send");
-
-    // sleep(1);
-
-    // if (send(sockfd, "TOP", 3, 0) == -1)
-    //     perror("send");
-
-    // sleep(1);
-
-    // if (send(sockfd, "POP", 3, 0) == -1)
-    //     perror("send");
-
-    // sleep(1);
-
-    // if (send(sockfd, "TOP", 3, 0) == -1)
-    //     perror("send");
-
-    // sleep(1);
-
-    // if (send(sockfd, "EXIT", 4, 0) == -1)
-    //     perror("send");
-
-    // sleep(1);
+    if (send(sockfd, "EXIT", 4, 0) == -1)
+            perror("send");
 
     close(sockfd);
 
     return 0;
+    
 }

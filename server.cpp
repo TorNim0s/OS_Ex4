@@ -73,7 +73,7 @@ void *myThreadFun(void *vargp)
 
         data[Bytes] = '\0';
 
-        // printf("RECIEVED: %s \n", data);
+        printf("RECIEVED: %s \n", data);
         if (strncmp(data, "EXIT", 4) == 0){
             printf("OUTPUT: Closed connection with: %d\n", new_fd);
             break;
@@ -93,22 +93,31 @@ void *myThreadFun(void *vargp)
                 pthread_mutex_unlock(&mutex);
                 continue;
             }
-            // printf("OUTPUT: %s\n", pointerData);
+            // printf("POPING: %s\n", pointerData);
             // if (send(new_fd, pointerData, strlen(pointerData), 0) == -1)
             //     perror("send");
         }
         else if (strncmp(data, "TOP",3) == 0)
         {
             char *pointerData = top();
+            char text[1024];
+            sprintf(text, "OUTPUT: %s", pointerData);
 
             if(pointerData == NULL){
                 printf("ERROR: Stack Underflow\n");
+                if (send(new_fd, "OUTPUT: Stack Underflow", strlen("OUTPUT: Stack Underflow"), 0) == -1)
+                    perror("send");
                 pthread_mutex_unlock(&mutex);
                 continue;
             }
-            printf("OUTPUT: %s\n", pointerData);
-            // if (send(new_fd, pointerData, strlen(pointerData), 0) == -1)
-            //     perror("send");
+            printf("%s\n", text);
+            if (send(new_fd, text, strlen(text), 0) == -1)
+                perror("send");
+
+        }
+        else{
+            printf("OUTPUT: Closed connection with: %d\n", new_fd);
+            break;
         }
         pthread_mutex_unlock(&mutex);
     }

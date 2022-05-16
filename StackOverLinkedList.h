@@ -9,14 +9,15 @@ struct Node
     char *data;
     struct Node *next;
 };
-Node *head = NULL;
+struct Node *head = NULL;
 
 // Push() operation on a  stack
 void push(char *value)
 {
     struct Node *newNode;
     newNode = (struct Node *)new_malloc(sizeof(struct Node));
-    newNode->data = value; // assign value to the node
+    newNode->data = (char *)new_malloc(strlen(value)+1);
+    strcpy(newNode->data, value);
     if (head == NULL)
     {
         newNode->next = NULL;
@@ -38,6 +39,7 @@ char *pop()
     struct Node *temp = head;
     char *temp_data = head->data;
     head = head->next;
+    new_free(temp->data);
     new_free(temp);
     return temp_data;
 }
