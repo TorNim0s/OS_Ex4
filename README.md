@@ -25,7 +25,7 @@ HOW TO USE TEST:
 2. Write in the terminal "make all"
     It will compile both the server and the client.
 3. Run the server by writing "./server" in the terminal
-4. For each client you want to run you will need a different terminal
+4. Open a different terminal
 
     After you are in a different terminal from the server,
     write "./test localhost" in the terminal
