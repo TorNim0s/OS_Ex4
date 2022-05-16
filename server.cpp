@@ -2,17 +2,6 @@
 ** server.c -- a stream socket server demo
 */
 
-/*
-HOW TO RUN:
-You can either write in terminal "make all" to create the client and both kinds of servers or
-"make 0" : to create the server that uses fork()
-"make 1" : to create the server that uses threads
-"make client" : to create the client
-
-While one of the servers is running, to run the client:
-type "./client localhost" in the terminal
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
