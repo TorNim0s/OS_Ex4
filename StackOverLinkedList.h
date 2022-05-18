@@ -3,6 +3,8 @@
 #include "ourMemory.h"
 
 
+// was taken from https://www.scaler.com/topics/c/stack-using-linked-list-in-c/
+
 // Structure to create a node with data and next pointer
 struct Node
 {
